@@ -1,4 +1,4 @@
-mod actions;
+pub mod actions;
 mod header;
 pub mod minimal;
 pub mod summary;
@@ -122,7 +122,7 @@ pub enum EmbeddedOperation {
 }
 
 #[binrw]
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Debug, Clone)]
 pub enum PostGameBlock {
     #[br(magic = 1u32)]
     WorldTime {
@@ -145,7 +145,7 @@ pub enum PostGameBlock {
 }
 
 #[binrw]
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Debug, Clone)]
 pub struct Leaderboard {
     pub id: u32,
     pub unknown1: u16,
@@ -155,7 +155,7 @@ pub struct Leaderboard {
 }
 
 #[binrw]
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Debug, Clone)]
 pub struct LeaderboardPlayer {
     pub player_number: i32,
     pub rank: i32,

@@ -44,26 +44,26 @@ pub struct AIInfo {
 #[binrw]
 #[derive(Serialize, Debug)]
 pub struct UnknownAI {
-    #[br(dbg)]
+    // #[br(dbg)]
     seq: u16,
     // #[br(magic = b"\xff\xff")]
-    #[br(dbg)]
+    // #[br(dbg)]
     skip_magic: u16,
-    #[br(dbg)]
+    // #[br(dbg)]
     unknown1: u8,
-    #[br(dbg)]
+    // #[br(dbg)]
     unknown_count: u8,
-    #[br(magic = b"\x00\x00", dbg)]
+    // #[br(magic = b"\x00\x00", dbg)]
     skip_magic2: u16,
     #[br(count = unknown_count)]
     unknown2: Vec<u32>,
-    #[br(dbg)]
+    // #[br(dbg)]
     unknown3: u32,
-    #[br(dbg)]
+    // #[br(dbg)]
     unknown4: u32,
-    #[br(dbg)]
+    // #[br(dbg)]
     unknown5: u32,
-    #[br(dbg)]
+    // #[br(dbg)]
     crc: u32,
 }
 

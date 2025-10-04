@@ -4,7 +4,7 @@ use serde::Serialize;
 use crate::Bool;
 
 #[binrw]
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Debug, Clone)]
 #[br(import(length: u32))]
 pub enum ActionData {
     #[br(magic = 0u8)]
@@ -425,7 +425,7 @@ pub struct Interact {
     unit_ids: Vec<u32>,
 }
 #[binrw]
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Debug, Clone)]
 pub enum Game {
     #[br(magic = 0u8)]
     Diplomacy {
