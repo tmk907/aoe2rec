@@ -446,7 +446,7 @@ pub enum ActionData {
 }
 
 #[binrw]
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Debug, Clone)]
 #[brw(repr(u8))]
 pub enum OrderType {
     Pack = 1,
