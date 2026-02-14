@@ -9,6 +9,7 @@ import hex.core;
 // import type.magic;
 float game_version;
 import aoe2operations;
+import aoe2header;
 
 struct Meta {
     u32 checksum_interval;
@@ -36,7 +37,8 @@ struct Aoe2Save {
     u8 compressed[hlen - 8];
     std::mem::Section header = std::mem::create_section("Header");
     hex::dec::zlib_decompress(compressed, header, -15);
-    HeaderStart header_start @ 0x0 in header;
+    // HeaderStart header_start @ 0x0 in header;
+    Rec parsed_header @ 0x0 in header;
     game_version = std::string::parse_float(std::format("{}.{}", header_start.version_major, header_start.version_minor));
     u32 log_version;
     Meta meta;

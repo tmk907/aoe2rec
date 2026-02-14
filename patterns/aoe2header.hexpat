@@ -6,7 +6,7 @@
 import type.magic;
 import std.math;
 
-double game_version;
+double header_game_version;
 bool parse_objects = true;
 bool parse_gaia_objects = true;
 
@@ -65,7 +65,7 @@ struct Player {
     DeString ai_type;
     u8 ai_civ_name_index;
     DeString ai_name;
-    if (game_version >= 66)
+    if (header_game_version >= 66)
     DeString censored_name;
     DeString name;
     u32 player_type;
@@ -75,8 +75,10 @@ struct Player {
     bool prefer_random;
     bool custom_ai;
     u8 handicap[8];
-    if (game_version >= 64)
+    if (header_game_version >= 64)
     u32 unknown_64_4;
+    if (header_game_version >= 67.2)
+    DeString unknown_67_2;
 };
 
 struct EmptySlot {
@@ -92,7 +94,7 @@ struct EmptySlot {
     u32 i1;
     u32 i2;
     u8 a4[8];
-    if (game_version >= 64)
+    if (header_game_version >= 64)
     u32 unknown_64_4;
 };
 
@@ -154,15 +156,15 @@ struct LobbySettings {
     bool handicap;
     bool unknown2;
     Separator;
-    if (game_version < 66)
+    if (header_game_version < 66)
     Player players[n_players];
-    if (game_version >= 66)
+    if (header_game_version >= 66)
     Player players[8];
     u8 unknown3[9];
     bool fog_of_war;
     bool cheat_notification;
     bool colored_chat;
-    if (game_version < 66)
+    if (header_game_version < 66)
     EmptySlot empty_slots[8 - n_players];
     Separator;
     bool ranked;
@@ -218,15 +220,19 @@ struct LobbySettings {
     u8 unknown17[8];
     u8 unknown18[3];
     u8 unknown19[8];
-    if (game_version >= 63)
+    if (header_game_version >= 63)
     u8 unknown24[5];
-    if (game_version >= 66)
+    if (header_game_version >= 66)
     Unknown66_3Lobby unknown_66_3;
     DeString unknown20;
     u8 unknown21[5];
     u8 unknown22;
     u8 unknown23[2];
     u32 ver37[2];
+    if (header_game_version >= 67.2) {
+        u32 unknown_de_67_2_1;
+        u32 unknown_de_67_2_2;
+      }
 };
 
 struct UnknownAI {
@@ -427,7 +433,7 @@ struct StaticObject<auto type> {
     u8 current_damage;
     u8 damaged_lately_timer;
     u8 under_attack;
-    if (game_version >= 66) {
+    if (header_game_version >= 66) {
       u8 unknown_de_66_3_1[2];
     }
     s32 group_id;
@@ -453,12 +459,12 @@ struct StaticObject<auto type> {
     DeString unknown6;
     DeString unknown7;
     u8 unknown8[2];
-    if (game_version >= 64) {
+    if (header_game_version >= 64) {
       u8 unknown_de_64_4_1;
     }
     u8 unknown9;
     u8 unknown10[18];
-    if (game_version >= 66)
+    if (header_game_version >= 66)
     u8 unknown_de_66_3_1[4];
 };
 
@@ -939,7 +945,7 @@ struct UnitAI<auto ai_type> {
     u8 formation_type;
     u8 unknown_de1[4];
     u8 unknown_de2;
-    if (game_version >= 63 && ai_type == 15 || ai_type == 17) {
+    if (header_game_version >= 63 && ai_type == 15 || ai_type == 17) {
         u8 unknown_de3[4];
     }
 };
@@ -957,11 +963,11 @@ fn has_position() {
 
 struct Combat<auto type> : BaseCombat<type> {
     u8 unknown_de1[14];
-    if (game_version >= 66)
+    if (header_game_version >= 66)
     u8 unknown_de_66_3_1[4];
     u8 unknown_de2[16];
     u8 unknown_de3[4];
-    if (game_version >= 64) {
+    if (header_game_version >= 64) {
       u8 unknown_de_64_4_2[19];
     }
     u8 next_volley;
@@ -1000,13 +1006,13 @@ struct Combat<auto type> : BaseCombat<type> {
     u8 unknown_de7[48];
     u8 unknown_de8[40];
     u16 unknown_de9;
-    if (game_version >= 63 && has_ai == 15) {
+    if (header_game_version >= 63 && has_ai == 15) {
         float unknown_de10;
         u8 unknown_de11[4];
     } else {
         u8 unknown_de10[2];
     }
-    if (game_version >=64)
+    if (header_game_version >=64)
     u8 unknown_de_64_4_3;
 };
 
@@ -1054,9 +1060,9 @@ struct Building<auto type> : Combat<type> {
     u8 unknown_building_de3[4];
     u8 unknown_building_de4[4];
     u8 unknown_building_de5[12];
-    if (game_version >= 64)
+    if (header_game_version >= 64)
     u32 unknown_building_de_64_4_1;
-    if (game_version >= 66)
+    if (header_game_version >= 66)
     u8 unknown_building_de_66_3_1[5];
 };
 
@@ -1105,20 +1111,20 @@ struct KnownPlayerAttributes {
 struct UnknownInitInner {
     u32 unknown1;
     u8 unknown2[6];
-    if (game_version < 66)
+    if (header_game_version < 66)
     u8 unknown3[5];
     u8 type;
     DeString unknown4;
     DeString unknown5;
     u16 unknown6[16];
-    if (game_version >= 66) {
+    if (header_game_version >= 66) {
       u16 unknown_count;
       u8 unknown7[unknown_count * 13];
       u8 unknown8;
     }
-    if (game_version >= 64)
+    if (header_game_version >= 64)
     u16 unknown9[2];
-    if (game_version >= 66)
+    if (header_game_version >= 66)
     u8 unknown10;
 };
 
@@ -1137,7 +1143,7 @@ struct InitMoving {
   u32 x;
   u32 y;
   u32 z;
-  if (game_version >= 66) {
+  if (header_game_version >= 66) {
    u8 unknown1[7];
   }
 };
@@ -1164,15 +1170,15 @@ struct InitBaseOffensive {
   u32 unknown1;
   s16 unknown2;
   s16 unknown3;
-  if (game_version >= 66) {
+  if (header_game_version >= 66) {
     u8 unknown_ibo_23[7];
   }
   float line_of_sight;
   float unknown4;
   float unknown5;
-  if (game_version >= 64)
+  if (header_game_version >= 64)
   u8 unknown6;
-  if (game_version >= 66)
+  if (header_game_version >= 66)
   u8 unknown29[13];
   u16 unknown7;
   u16 attack_bonus_count;
@@ -1195,12 +1201,12 @@ struct InitBaseOffensive {
   u8 unknown14;
   u16 unknown15;
   float unknown16[3];
-  if (game_version >= 64) {
+  if (header_game_version >= 64) {
     s16 unknown17;
     float unknown18;
     s16 unknown19;
   }
-  if (game_version >= 66) {
+  if (header_game_version >= 66) {
     float unknown30[3];
   }
 };
@@ -1214,28 +1220,28 @@ struct InitCombat : InitBaseOffensive {
   s16 cost_2;
   s16 resource_unknown_2;
   s16 unknown20[3];
-  if (game_version >= 66) {
+  if (header_game_version >= 66) {
     u16 unknown_count;
   }
   s16 build_time;
-  if (game_version < 66) {
+  if (header_game_version < 66) {
     float unknown21;
     s16 unknown22;
   }
   s16 unknown23;
   u8 unknown38;
-  if (game_version >= 66) {  
+  if (header_game_version >= 66) {  
     u8 unknown31[9 * unknown_count];
     u8 unknown32;
   }
   u16 unknown26;
   u8 unknown27[58];
-  if (game_version >= 66) {
+  if (header_game_version >= 66) {
     u8 unknown38;
     u16 unknown36[3];
     float unknown37[3];
   }
-  if (game_version >= 66.60) {
+  if (header_game_version >= 66.60) {
     u8 unknown39[2];
   }
 };
@@ -1248,7 +1254,7 @@ struct InitMissile : InitBaseOffensive {
 struct InitBuilding : InitCombat {
   u8 unknown24;
   s16 unknown25[6];
-  if (game_version >= 66) {
+  if (header_game_version >= 66) {
     u8 unknown_building_1[24];
   }
 };
@@ -1259,7 +1265,7 @@ struct InitObject {
   u16 id[4];
   u8 u2;
   u8 u3;
-  if(game_version < 66)
+  if(header_game_version < 66)
   u32 u3_1;
   u16 u4[2];
   float u5;
@@ -1273,12 +1279,12 @@ struct InitObject {
   u16 u8_3[4];
   u8 u8_4;
   u16 u9;
-  if (game_version >= 64) {
+  if (header_game_version >= 64) {
     s16 u10[2];
     u8 u11;
     u32 u12;
   }
-  if (game_version >= 66) {
+  if (header_game_version >= 66) {
     s8 u21[29];
     s8 u_count;
     s32 u22[u_count];
@@ -1513,7 +1519,8 @@ struct Rec {
     float old_save_version;
     u16 version_minor;
     u16 version_major;
-    game_version = version_major + (std::math::round(float(version_minor) / 65536 * 100) / 100);
+    header_game_version = version_major + (std::math::round(float(version_minor) / 65536 * 100) / 100);
+    std::print(std::format("Save version: {}", header_game_version));
     u32 build;
     s32 timestamp;
     u16 version[2];
@@ -1531,8 +1538,8 @@ struct Rec {
     Scenario scenario;
 };
 
-// Rec savegame @ 0x00;
-// game_version = 66;
+// Rec rec_header @ 0x00;
+// header_game_version = 66;
 
 struct UnknownPlayerInitAfterHeader {
  u8 player_id;
