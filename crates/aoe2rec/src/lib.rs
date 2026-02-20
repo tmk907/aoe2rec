@@ -1,5 +1,5 @@
 pub mod actions;
-mod header;
+pub mod header;
 pub mod minimal;
 pub mod summary;
 mod tests;

@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.0](https://github.com/aoe2ct/aoe2rec/compare/aoe2rec-v0.5.2...aoe2rec-v0.6.0) - 2026-02-14
+
+### Other
+
+- Add new fields for upcoming DLC changes
+
+## [0.5.2](https://github.com/aoe2ct/aoe2rec/compare/aoe2rec-v0.5.1...aoe2rec-v0.5.2) - 2025-12-14
+
+### Other
+
+- Make actions and header public
+
 ## [0.5.1](https://github.com/aoe2ct/aoe2rec/compare/aoe2rec-v0.5.0...aoe2rec-v0.5.1) - 2025-12-13
 
 ### Other
