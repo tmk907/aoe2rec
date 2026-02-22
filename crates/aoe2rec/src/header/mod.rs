@@ -34,8 +34,8 @@ pub struct RecHeader {
     pub ai_config: AIConfig,
     pub replay: Replay,
     pub map_info: MapInfo,
-    #[br(args(replay.num_players, version_major))]
-    pub initial: Initial,
+    #[br(if(false))]
+    pub initial: Option<Initial>,
 }
 
 #[binrw]
@@ -373,7 +373,7 @@ pub struct Initial {
     pub particles: Vec<u8>,
     pub identifier: u32,
     #[serde(skip_serializing)]
-    #[br(count = 1, args { inner: (num_players,major) })]
+    #[br(count = num_players as usize, args { inner: (num_players,major) })]
     pub players: Vec<PlayerInit>,
     #[serde(skip_serializing)]
     pub unknown1: [u8; 21],
@@ -433,9 +433,9 @@ pub struct PlayerInit {
     pub allied_los: u32,
     pub allied_victory: Bool,
     pub player_name: LenString16,
-    #[br(magic = b"\x16")]
+    #[br(if(major < 66), magic = b"\x16")]
     pub header_data_count: i32,
-    #[br(magic = b"\x21")]
+    #[br(if(major < 66), magic = b"\x21")]
     #[br(count=header_data_count)]
     pub player_stats: Vec<f32>,
     #[br(count=header_data_count)]
