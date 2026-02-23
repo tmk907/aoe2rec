@@ -250,16 +250,16 @@ pub struct GameSettings {
     pub unknown27: Vec<u32>,
     #[serde(skip_serializing)]
     pub unknown20: DeString,
+    #[br(if(major >= 67))]
+    pub unknown_de_67_2_1: DeString,
+    #[br(if(major >= 67))]
+    pub unknown_de_67_2_2: DeString,
     #[serde(skip_serializing)]
     pub unknown21: [u8; 5],
     #[serde(skip_serializing)]
     pub unknown22: u8, // 13.13
     #[serde(skip_serializing)]
     pub unknown23: [u8; 2], // 13.13
-    #[br(if(major >= 67))]
-    pub unknown_de_67_2_1: u32,
-    #[br(if(major >= 67))]
-    pub unknown_de_67_2_2: u32,
     pub timestamp: u32,
     #[serde(skip_serializing)]
     pub unknown25: u32,

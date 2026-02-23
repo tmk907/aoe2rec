@@ -225,13 +225,13 @@ struct LobbySettings {
     if (header_game_version >= 66)
     Unknown66_3Lobby unknown_66_3;
     DeString unknown20;
+    if (header_game_version >= 67.2) {
+        DeString unknown_de_67_2_1;
+        DeString unknown_de_67_2_2;
+    }
     u8 unknown21[5];
     u8 unknown22;
     u8 unknown23[2];
-    if (header_game_version >= 67.2) {
-        u32 unknown_de_67_2_1;
-        u32 unknown_de_67_2_2;
-    }
     u32 timestamp_repeat;
     u32 ver37;
 };
@@ -1251,7 +1251,7 @@ struct InitCombat : InitBaseOffensive {
   }
   s16 unknown23;
   u8 unknown38;
-  if (header_game_version >= 66) {  
+  if (header_game_version >= 66) {
     u8 unknown31[9 * unknown_count];
     u8 unknown32;
   }
@@ -1397,6 +1397,23 @@ struct CivMaybe {
   s32 trainable_units[unit_count];
   u8 tech_count;
   s32 available_techs[tech_count];
+};
+
+struct TechUnlocks {
+  s32 tech_id;
+  u8 unknown1;
+  s32 building_id;
+  u8 unlocked_building_count;
+  s32 unlocked_buildings[unlocked_building_count];
+  u8 unlocked_unit_count;
+  s32 unlocked_units[unlocked_unit_count];
+  u8 unlocked_tech_count;
+  s32 unlocked_techs[unlocked_tech_count];
+  u8 unknown2[96];
+}[[format("tech_unlock_name")]];
+
+fn tech_unlock_name(TechUnlocks tu) {
+  return std::format("{{tech: {}}}", tu.tech_id);
 };
 
 struct Init<auto num_players> {
