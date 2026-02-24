@@ -69,7 +69,7 @@ struct Player {
     DeString censored_name;
     DeString name;
     u32 player_type;
-    u32 profile_id;
+    s32 profile_id;
     u8 ai_unknown[4];
     s32 player_number;
     bool prefer_random;
@@ -225,14 +225,15 @@ struct LobbySettings {
     if (header_game_version >= 66)
     Unknown66_3Lobby unknown_66_3;
     DeString unknown20;
+    if (header_game_version >= 67.2) {
+        DeString unknown_de_67_2_1;
+        DeString unknown_de_67_2_2;
+    }
     u8 unknown21[5];
     u8 unknown22;
     u8 unknown23[2];
-    u32 ver37[2];
-    if (header_game_version >= 67.2) {
-        u32 unknown_de_67_2_1;
-        u32 unknown_de_67_2_2;
-      }
+    u32 timestamp_repeat;
+    u32 ver37;
 };
 
 struct UnknownAI {
@@ -275,7 +276,27 @@ struct AIConfig {
         u16 unknown_count3;
         u32 unknown11[3];
         UnknownAI unknown12[unknown_count3];
-        type::Magic<"\x00"> void[4096];
+        u16 unknown_max4;
+        u16 unknown_count4;
+        u32 unknown13[3];
+        UnknownAI unknown14[unknown_count4];
+        u16 unknown_max5;
+        u16 unknown_count5;
+        u32 unknown15[3];
+        UnknownAI unknown16[unknown_count5];
+        u16 unknown_max6;
+        u16 unknown_count6;
+        u32 unknown17[3];
+        UnknownAI unknown18[unknown_count6];
+        u16 unknown_max7;
+        u16 unknown_count7;
+        u32 unknown19[3];
+        UnknownAI unknown20[unknown_count7];
+        u32 unknown21[18];
+        float unknown22[2];
+        u32 unknown23[9];
+        type::Magic<"\xff\xff\xff\xff"> void1[656];
+        type::Magic<"\x00\x00\x00\x00"> void[1024];
     }
 };
 
@@ -305,7 +326,7 @@ struct Replay {
     u8 king_campaign_scenario;
     u32 player_turn;
     u32 player_turns[num_players];
-    padding[8];
+    u8 unknown_1[8];
 };
 
 struct MapTile<auto parent_tile_num> {
@@ -1230,7 +1251,7 @@ struct InitCombat : InitBaseOffensive {
   }
   s16 unknown23;
   u8 unknown38;
-  if (header_game_version >= 66) {  
+  if (header_game_version >= 66) {
     u8 unknown31[9 * unknown_count];
     u8 unknown32;
   }
@@ -1309,7 +1330,27 @@ struct InitMap {
   u32 unknown1;
   u16 unknown2;
   s16 unknown_tiles[size_x * size_y];
-  u32 unknown3[11];
+};
+
+struct RestoreSize {
+  u32 type_size;
+  u32 count;
+};
+
+struct RestoreObject {
+  u8 unknown1[4];
+  u32 unknown2;
+  u32 unknown3;
+  u32 unknown4;
+  u8 unknown5;
+  float unknown6;
+  float unknown7;
+};
+
+struct InitStateRestore {
+  u32 restores_count;
+  RestoreSize restore_sizes[restores_count];
+  RestoreObject restore_objects[while(std::mem::read_unsigned($, 1) != 0x0B)]; // FIXME: This should get lengths from restore_sizes
 };
 
 struct UnknownGaia {
@@ -1329,6 +1370,50 @@ struct UnknownSection1 {
   u8 unknown2[177];
   float unknown3;
   float unknown4;
+};
+
+struct UnitConfig {
+  u32 unit_id;
+  u8 unknown1;
+  s32 production_building_id;
+  u32 unknown3;
+  u32 unknown4;
+  u32 parent_unit_id;
+  u32 unknown5[19];
+  u8 linked_units_count;
+  u32 linked_units[linked_units_count];
+  s32 unknown6;
+  s32 required_tech_id;
+  s32 unknown8;
+  s32 enabling_tech_id;
+};
+
+struct CivMaybe {
+  s32 building_id;
+  u8 unknown1;
+  u8 unknown_count1;
+  s32 unknown_units1[unknown_count1];
+  u8 unit_count;
+  s32 trainable_units[unit_count];
+  u8 tech_count;
+  s32 available_techs[tech_count];
+};
+
+struct TechUnlocks {
+  s32 tech_id;
+  u8 unknown1;
+  s32 building_id;
+  u8 unlocked_building_count;
+  s32 unlocked_buildings[unlocked_building_count];
+  u8 unlocked_unit_count;
+  s32 unlocked_units[unlocked_unit_count];
+  u8 unlocked_tech_count;
+  s32 unlocked_techs[unlocked_tech_count];
+  u8 unknown2[96];
+}[[format("tech_unlock_name")]];
+
+fn tech_unlock_name(TechUnlocks tu) {
+  return std::format("{{tech: {}}}", tu.tech_id);
 };
 
 struct Init<auto num_players> {
@@ -1356,13 +1441,19 @@ struct Init<auto num_players> {
     u16 spawn_x;
     u16 spawn_y;
     u8 culture;
+    if (header_game_version >= 67.2)
+    DeString player_name;
     u8 civilization;
     u8 game_status;
     bool resigned;
     u8 unknown2;
     u8 player_color;
     u8 unknown3;
-    type::Magic<"\x00\x0b">;
+    if (header_game_version >= 67.2) {
+      type::Magic<"\x0b">;
+    } else {
+      type::Magic<"\x00\x0b">;
+    }
     u8 unknown4;
     type::Magic<"\x0b">;
     u32 unknown5[2];
@@ -1415,6 +1506,9 @@ struct Init<auto num_players> {
     u8 unknown_section_15[2751];
     type::Magic<"\x0B">;
     u8 unknown_section_16[6962];
+    if (std::mem::read_unsigned($, 1) != 0x0B) {
+      u8 unknown_section_16_1[111];
+    }
     type::Magic<"\x0B">;
     u8 unknown_section_17[685];
     type::Magic<"\x0B">;
@@ -1437,6 +1531,7 @@ struct Init<auto num_players> {
     InitObject initial_objects[while(std::mem::read_unsigned($, 1) != 0x0B)];
     type::Magic<"\x0B">;
     InitMap initial_map;
+    InitStateRestore initial_state_restore;
     type::Magic<"\x0B\x00">;
     u32 unknown23;
     type::Magic<"\x02\x00\x00">;

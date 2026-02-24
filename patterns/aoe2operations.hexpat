@@ -6,7 +6,9 @@ namespace aoe2op {
   enum ActionType: u8 {
     Interact = 0,
     Stop = 1,
+    AiInteract = 2,
     Move = 3,
+    AiMove = 10,
     Resign = 11,
     Stance = 18,
     Guard = 19,
@@ -15,12 +17,14 @@ namespace aoe2op {
     Formation = 23,
     Chapter = 32,
     AttackMove = 33,
+    DeUnknown37 = 37,
     AutoScout = 38,
     Transform = 41,
     Unknown42 = 42,
     SwitchAttack = 43,
     Unknown44 = 44,
     MultiGatherpoint = 45,
+    AiQueue = 100,
     Research = 101,
     Build = 102,
     Game = 103,
@@ -40,6 +44,7 @@ namespace aoe2op {
     TownBell = 127,
     BackToWork = 128,
     DEQueue= 129,
+    DeUnknown130 = 130,
     Unknown140 = 140,
     Tribute = 196,
   };
@@ -65,6 +70,15 @@ namespace aoe2op {
     u32 unit_ids[selected];
   };
 
+  struct AiInteract : BasePlayerAction {
+    s32 target_id;
+    float x;
+    float y;
+    s32 unknown_count_1;
+    s32 unknown_1;
+    s32 unknown_items_1[unknown_count_1];
+  };
+
   struct Move: BasePlayerAction {
     s32 unknown2;
     float x;
@@ -74,6 +88,21 @@ namespace aoe2op {
     u8 unknown4[4];
     if (selected > -1)
     u32 unit_ids[selected];
+  };
+
+  struct AiMove: BasePlayerAction {
+    s32 unknown_count_1;
+    s32 unknown3;
+    s32 unknown4;
+    s32 unknown5;
+    s32 unknown6;
+    float x;
+    float y;
+    float unknown7;
+    float unknown8;
+    s8 unknown9[4];
+    if (unknown_count_1 > 1)
+    s32 unknown10[unknown_count_1];
   };
 
   struct Resign: BasePlayerAction {
@@ -123,6 +152,10 @@ namespace aoe2op {
   struct AttackMove: BaseAggressiveCommand {
   };
 
+  struct DeUnknown37: BasePlayerAction {
+    s8 unknown1[5];
+  };
+
   struct AutoScout: BasePlayerAction {
     u32 selected;
     u32 unit_ids[selected];
@@ -158,11 +191,17 @@ namespace aoe2op {
     u32 building_ids[selected];
   };
 
+  struct AiQueue: BasePlayerAction {
+    s32 building_id;
+    s32 unknown1;
+    s32 unit_type_id;
+  };
+
   struct Research: BasePlayerAction {
     u32 building_id;
     u16 selected;
     u16 technology_type;
-    u8 unknown1[5];
+    s8 unknown1[5];
     u32 selected_building_ids[selected];
   };
 
@@ -220,6 +259,16 @@ namespace aoe2op {
     u32 unknown1[3];
   };
 
+  struct Unknown2Command {
+    u8 unknown1[12];
+  };
+
+  struct Cheat {
+    s16 player_id;
+    s32 cheat_id;
+    s8 unknown1[6];
+  };
+
   struct Game: BasePlayerAction {
     GameCommand mode;
     match(mode) {
@@ -228,6 +277,8 @@ namespace aoe2op {
       (GameCommand::FarmAutoqueue): FarmAutoqueue [[inline]];
       (GameCommand::FishtrapAutoqueue): FishtrapAutoqueue [[inline]];
       (GameCommand::DefaultStance): DefaultStance [[inline]];
+      (GameCommand::Unknown2): Unknown2Command;
+      (GameCommand::Cheat): Cheat;
       (_): std::error(std::format("Unknown game mode: {} at 0x{:X}", u8(mode), $));
     }
   };
@@ -358,6 +409,12 @@ namespace aoe2op {
     u32 building_ids[selected];
   };
 
+  struct Unknown130 : BasePlayerAction {
+    s32 unknown1;
+    u8 unknown2;
+    s32 unknown3;
+  };
+
   struct Unknown140: BasePlayerAction {
     u32 unit_id;
   };
@@ -381,7 +438,9 @@ namespace aoe2op {
     match(action_type) {
       (ActionType::Interact): Interact [[inline]];
       (ActionType::Stop): Stop [[inline]];
+      (ActionType::AiInteract): AiInteract [[inline]];
       (ActionType::Move): Move [[inline]];
+      (ActionType::AiMove): AiMove [[inline]];
       (ActionType::Resign): Resign [[inline]];
       (ActionType::Stance): Stance [[inline]];
       (ActionType::Guard): Guard [[inline]];
@@ -390,12 +449,14 @@ namespace aoe2op {
       (ActionType::Formation): Formation [[inline]];
       (ActionType::Chapter): Chapter [[inline]];
       (ActionType::AttackMove): AttackMove [[inline]];
+      (ActionType::DeUnknown37): DeUnknown37 [[inline]];
       (ActionType::AutoScout): AutoScout [[inline]];
       (ActionType::Transform): Transform [[inline]];
       (ActionType::Unknown42): Unknown42 [[inline]];
       (ActionType::SwitchAttack): SwitchAttack [[inline]];
       (ActionType::Unknown44): Unknown44 [[inline]];
       (ActionType::MultiGatherpoint): MultiGatherpoint [[inline]];
+      (ActionType::AiQueue): AiQueue [[inline]];
       (ActionType::Research): Research [[inline]];
       (ActionType::Build): Build [[inline]];
       (ActionType::Game): Game [[inline]];
@@ -415,6 +476,7 @@ namespace aoe2op {
       (ActionType::TownBell): TownBell [[inline]];
       (ActionType::BackToWork): BackToWork [[inline]];
       (ActionType::DEQueue): DEQueue [[inline]];
+      (ActionType::DeUnknown130): Unknown130 [[inline]];
       (ActionType::Unknown140): Unknown140 [[inline]];
       (ActionType::Tribute): Tribute [[inline]];
       (_): {
