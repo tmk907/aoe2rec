@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.0](https://github.com/aoe2ct/aoe2rec/compare/aoe2rec-v0.8.0...aoe2rec-v0.9.0) - 2026-03-08
+
+### Other
+
+- Switch to a From<Difficulty> trait implementation
+- Correct the translation into javascript for the new lobby settings
+
+## [0.8.0](https://github.com/aoe2ct/aoe2rec/compare/aoe2rec-v0.7.0...aoe2rec-v0.8.0) - 2026-03-08
+
+### Other
+
+- Adjust lobby settings to include difficulty
+- Correct the lobby settings to account for the DeStrings added in 67.2
+
 ## [0.7.0](https://github.com/aoe2ct/aoe2rec/compare/aoe2rec-v0.6.0...aoe2rec-v0.7.0) - 2026-02-21
 
 ### Other
