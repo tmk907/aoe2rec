@@ -100,36 +100,57 @@ pub enum ActionData {
     Stance {
         player_id: u8,
         action_length: u16,
-        #[br(count = length - 1 - 3)]
-        data: Vec<u8>,
+        selected: i16,
+        unknown1: i16,
+        stance: i16,
+        unknown2: i16,
+        #[br(count = if selected > -1 { selected } else { 0 })]
+        unit_ids: Vec<u32>
     },
     #[br(magic = 19u8)]
     Guard {
         player_id: u8,
         action_length: u16,
-        #[br(count = length - 1 - 3)]
-        data: Vec<u8>,
+        selected: i16,
+        unknown1: i16,
+        target_unit_id: u32,
+        #[br(count = if selected > -1 { selected } else { 0 })]
+        unit_ids: Vec<u32>
     },
     #[br(magic = 20u8)]
     Follow {
         player_id: u8,
         action_length: u16,
-        #[br(count = length - 1 - 3)]
-        data: Vec<u8>,
+        selected: i16,
+        unknown1: i16,
+        target_unit_id: u32,
+        #[br(count = if selected > -1 { selected } else { 0 })]
+        unit_ids: Vec<u32>
     },
     #[br(magic = 21u8)]
     Patrol {
         player_id: u8,
         action_length: u16,
-        #[br(count = length - 1 - 3)]
-        data: Vec<u8>,
+        selected: i16,
+        unknown1: i16,
+        unknown2: u32,
+        #[br(count = 10)]
+        x: Vec<f32>,
+        #[br(count = 10)]
+        y: Vec<f32>,
+        #[br(count = if selected > -1 { selected } else { 0 })]
+        unit_ids: Vec<u32>
     },
     #[br(magic = 23u8)]
     Formation {
         player_id: u8,
         action_length: u16,
-        #[br(count = length - 1 - 3)]
-        data: Vec<u8>,
+        selected: i16,
+        unknown1: i16,
+        formation: i16,
+        unknown2: i16,
+        #[br(count = if selected > -1 { selected } else { 0 })]
+        unit_ids: Vec<u32>
     },
     #[br(magic = 27u8)]
     Save {
@@ -239,7 +260,11 @@ pub enum ActionData {
     Build {
         player_id: u8,
         action_length: u16,
-        #[br(count = length - 1 - 3)]
+        unknown_1: u32,
+        x: f32,
+        y: f32,
+        building_type: u8,
+        #[br(count = length - 1 - 3 - 4 - 4 - 4 -1)]
         data: Vec<u8>,
     },
     #[br(magic = 103u8)]
@@ -259,15 +284,23 @@ pub enum ActionData {
     Wall {
         player_id: u8,
         action_length: u16,
-        #[br(count = length - 1 - 3)]
+        unknown_1: u32,
+        x_from: u8,
+        unknown_2: u8,
+        y_from: u8,
+        unknown_3: u8,
+        x_to: u8,
+        unknown_4: u8,
+        y_to: u8,
+        unknown_5: u8,
+        #[br(count = length - 1 - 3 - 4 - 8)]
         data: Vec<u8>,
     },
     #[br(magic = 106u8)]
     Delete {
         player_id: u8,
         action_length: u16,
-        #[br(count = length - 1 - 3)]
-        data: Vec<u8>,
+        unit_id: u32,
     },
     #[br(magic = 107u8)]
     AttackGround {
@@ -322,8 +355,12 @@ pub enum ActionData {
     Flare {
         player_id: u8,
         action_length: u16,
-        #[br(count = length - 1 - 3)]
-        data: Vec<u8>,
+        unknown_1: u32,
+        x: f32,
+        y: f32,
+        player_count: u8,
+        #[br(count = if player_count > 0 { player_count } else { 0 })]
+        receivers: Vec<u8>,
     },
     #[br(magic = 117u8)]
     Order {
@@ -353,8 +390,15 @@ pub enum ActionData {
     Gatherpoint {
         player_id: u8,
         action_length: u16,
-        #[br(count = length - 1 - 3)]
-        data: Vec<u8>,
+        selected: i16,
+        padding: u16,
+        x: f32,
+        y: f32,
+        unknown1: u32,
+        unknown2: u32,
+        unknown3: u8,
+        #[br(count = if selected > -1 { selected } else { 0 })]
+        unit_ids: Vec<u32>
     },
     #[br(magic = 122u8)]
     Sell {
