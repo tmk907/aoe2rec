@@ -293,7 +293,8 @@ pub enum ActionData {
         unknown_4: u8,
         y_to: u8,
         unknown_5: u8,
-        #[br(count = length - 1 - 3 - 4 - 8)]
+        building_type: u8,
+        #[br(count = length - 1 - 3 - 4 - 9)]
         data: Vec<u8>,
     },
     #[br(magic = 106u8)]
