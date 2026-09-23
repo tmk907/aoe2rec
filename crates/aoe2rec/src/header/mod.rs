@@ -13,8 +13,7 @@ use serde::Serialize;
 pub fn decompress(header_data: Vec<u8>) -> RecHeader {
     let (header, _) = yazi::decompress(&header_data, yazi::Format::Raw).unwrap();
     let mut hreader = BufReader::new(Cursor::new(header));
-    let parsed_header: RecHeader = hreader.read_le().unwrap();
-    return parsed_header;
+    hreader.read_le().unwrap()
 }
 
 #[binrw]
@@ -36,6 +35,16 @@ pub struct RecHeader {
     pub map_info: MapInfo,
     #[br(args(replay.num_players, version_major))]
     pub initial: Initial,
+}
+
+impl RecHeader {
+    pub fn players(&self) -> &Vec<Player> {
+        &self.game_settings.players
+    }
+
+    pub fn save_version(&self) -> String {
+        format!("{}.{}", self.version_major, self.version_minor)
+    }
 }
 
 #[binrw]
@@ -421,6 +430,8 @@ pub struct InnerUnknownPlayerStruct {
     pub unknown_type: u16,
     pub unknown1: DeString,
     pub unknown2: DeString,
+    #[br(if(major >= 68))]
+    pub unknown_68_9: DeString,
     pub unknown3: [u16; 16],
     #[br(if(major >= 66))]
     pub unknown5: InnerUnknownPlayerStruct2,
